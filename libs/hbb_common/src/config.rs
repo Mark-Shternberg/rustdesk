@@ -442,10 +442,6 @@ impl Config2 {
         config
     }
 
-    pub fn add_relay_server(&mut self) {
-        self.options.insert(String::from("relay-server"), String::from("remote.west-e.ru"));
-    }
-
     pub fn file() -> PathBuf {
         Config::file_("2")
     }
