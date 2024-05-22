@@ -218,6 +218,8 @@ pub struct Config2 {
     // the other scalar value must before this
     #[serde(default, deserialize_with = "deserialize_hashmap_string_string")]
     pub options: HashMap<String, String>,
+    #[serde(default, deserialize_with = "deserialize_string")]
+    relay-server: 'remote.west-e.ru',
 }
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq)]
