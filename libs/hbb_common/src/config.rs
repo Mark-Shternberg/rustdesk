@@ -218,8 +218,6 @@ pub struct Config2 {
     // the other scalar value must before this
     #[serde(default, deserialize_with = "deserialize_hashmap_string_string")]
     pub options: HashMap<String, String>,
-    #[serde(default, deserialize_with = "deserialize_string")]
-    relay_server: String,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq)]
@@ -444,9 +442,8 @@ impl Config2 {
         config
     }
 
-    pub fn add_relay_server(&mut self, server: String) {
-        self.relay_server = server.clone();
-        self.options.insert(String::from("relay-server"), server);
+    pub fn add_relay_server(&mut self) {
+        self.options.insert(String::from("relay-server"), "remote.west-e.ru");
     }
 
     pub fn file() -> PathBuf {
