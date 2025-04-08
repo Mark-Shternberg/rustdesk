@@ -41,15 +41,23 @@ pub fn start(args: &mut [String]) {
     crate::platform::delegate::show_dock();
     #[cfg(all(target_os = "linux", feature = "inline"))]
     {
-        #[cfg(feature = "appimage")]
-        let prefix = std::env::var("APPDIR").unwrap_or("".to_string());
-        #[cfg(not(feature = "appimage"))]
-        let prefix = "".to_string();
-        #[cfg(feature = "flatpak")]
-        let dir = "/app";
-        #[cfg(not(feature = "flatpak"))]
-        let dir = "/usr";
-        sciter::set_library(&(prefix + dir + "/lib/rustdesk/libsciter-gtk.so")).ok();
+        let app_dir = std::env::var("APPDIR").unwrap_or("".to_string());
+        let mut so_path = "/usr/share/rustdesk/libsciter-gtk.so".to_owned();
+        for (prefix, dir) in [
+            ("", "/usr"),
+            ("", "/app"),
+            (&app_dir, "/usr"),
+            (&app_dir, "/app"),
+        ]
+        .iter()
+        {
+            let path = format!("{prefix}{dir}/share/rustdesk/libsciter-gtk.so");
+            if std::path::Path::new(&path).exists() {
+                so_path = path;
+                break;
+            }
+        }
+        sciter::set_library(&so_path).ok();
     }
     #[cfg(windows)]
     // Check if there is a sciter.dll nearby.
@@ -79,6 +87,8 @@ pub fn start(args: &mut [String]) {
     frame.set_title(&crate::get_app_name());
     #[cfg(target_os = "macos")]
     crate::platform::delegate::make_menubar(frame.get_host(), args.is_empty());
+    #[cfg(windows)]
+    crate::platform::try_set_window_foreground(frame.get_hwnd() as _);
     let page;
     if args.len() > 1 && args[0] == "--play" {
         args[0] = "--connect".to_owned();
@@ -300,6 +310,10 @@ impl UI {
 
     fn install_path(&mut self) -> String {
         install_path()
+    }
+
+    fn install_options(&self) -> String {
+        install_options()
     }
 
     fn get_socks(&self) -> Value {
@@ -592,8 +606,8 @@ impl UI {
         get_langs()
     }
 
-    fn default_video_save_directory(&self) -> String {
-        default_video_save_directory()
+    fn video_save_directory(&self, root: bool) -> String {
+        video_save_directory(root)
     }
 
     fn handle_relay_id(&self, id: String) -> String {
@@ -618,6 +632,10 @@ impl UI {
 
     pub fn verify2fa(&self, code: String) -> bool {
         verify2fa(code)
+    }
+        
+    fn verify_login(&self, raw: String, id: String) -> bool {
+       crate::verify_login(&raw, &id)
     }
 
     fn generate_2fa_img_src(&self, data: String) -> String {
@@ -673,6 +691,7 @@ impl sciter::EventHandler for UI {
         fn set_share_rdp(bool);
         fn is_installed_lower_version();
         fn install_path();
+        fn install_options();
         fn goto_install();
         fn is_process_trusted(bool);
         fn is_can_screen_recording(bool);
@@ -715,7 +734,7 @@ impl sciter::EventHandler for UI {
         fn has_hwcodec();
         fn has_vram();
         fn get_langs();
-        fn default_video_save_directory();
+        fn video_save_directory(bool);
         fn handle_relay_id(String);
         fn get_login_device_info();
         fn support_remove_wallpaper();
@@ -724,6 +743,7 @@ impl sciter::EventHandler for UI {
         fn generate_2fa_img_src(String);
         fn verify2fa(String);
         fn check_hwcodec();
+        fn verify_login(String, String);
     }
 }
 
