@@ -232,3 +232,6 @@ panic = 'abort'
 strip = true
 #opt-level = 'z' # only have smaller size after strip
 rpath = true
+
+[patch.crates-io]
+rustls-native-certs = "0.8.2"
