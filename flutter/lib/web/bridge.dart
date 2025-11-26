@@ -1600,7 +1600,7 @@ class RustdeskImpl {
     return Future.value(false);
   }
 
-  bool isIncomingOnly({dynamic hint}) {
+  bool isIncomingOnly() {
     return true;
   }
 
@@ -1615,7 +1615,7 @@ class RustdeskImpl {
 
   bool isDisableSettings({dynamic hint}) {
     // Checks HARD_SETTINGS["disable-settings"] == "Y"
-    return mainGetHardOption(key: "disable-settings", hint: hint) == "Y";
+    return true;
   }
 
   bool isDisableAb({dynamic hint}) {
