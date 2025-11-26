@@ -233,6 +233,3 @@ strip = true
 #opt-level = 'z' # only have smaller size after strip
 rpath = true
 
-[patch.crates-io]
-rustls-native-certs = { git = "https://github.com/rustls/rustls-native-certs", rev = "0.8.2" }
-
