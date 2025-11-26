@@ -1600,7 +1600,7 @@ class RustdeskImpl {
     return Future.value(false);
   }
 
-  bool isIncomingOnly() {
+  bool isIncomingOnly({dynamic hint}) {
     return true;
   }
 
