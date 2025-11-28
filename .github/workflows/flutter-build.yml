@@ -166,7 +166,7 @@ jobs:
       - name: Build rustdesk
         run: |
           # Windows: build RustDesk
-          python3 .\build.py --portable --hwcodec --flutter --vram --skip-portable-pack
+          python3 .\build.py --portable --flutter --vram --skip-portable-pack
           mv ./flutter/build/windows/x64/runner/Release ./rustdesk
 
           # Download usbmmidd_v2.zip and extract it to ./rustdesk
@@ -363,7 +363,7 @@ jobs:
           python3 res/inline-sciter.py
           # Patch sciter x86
           sed -i 's/branch = "dyn"/branch = "dyn_x86"/g' ./Cargo.toml
-          cargo build --features inline,vram,hwcodec --release --bins
+          cargo build --features inline,vram --release --bins
           mkdir -p ./Release
           mv ./target/release/rustdesk.exe ./Release/rustdesk.exe
           curl -LJ -o ./Release/sciter.dll https://github.com/c-smile/sciter-sdk/raw/master/bin.win/x32/sciter.dll
@@ -519,7 +519,7 @@ jobs:
       - name: Build rustdesk lib
         run: |
           rustup target add ${{ matrix.job.target }}
-          cargo build --features flutter,hwcodec --release --target aarch64-apple-ios --lib
+          cargo build --features flutter --release --target aarch64-apple-ios --lib
           
       - name: Upload liblibrustdesk.a Artifacts
         uses: actions/upload-artifact@master
@@ -1480,7 +1480,7 @@ jobs:
               export JOBS=""
             fi
             echo $JOBS
-            cargo build --lib $JOBS --features hwcodec,flutter,unix-file-copy-paste --release
+            cargo build --lib $JOBS --features flutter,unix-file-copy-paste --release
             rm -rf target/release/deps target/release/build
             rm -rf ~/.cargo
 
@@ -1632,7 +1632,7 @@ jobs:
               deb_arch: amd64,
               sciter_arch: x64,
               vcpkg-triplet: x64-linux,
-              extra_features: ",hwcodec,unix-file-copy-paste",
+              extra_features: ",unix-file-copy-paste",
             }
           - {
               arch: armv7,
